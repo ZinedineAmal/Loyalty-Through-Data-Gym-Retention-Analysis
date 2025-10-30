@@ -73,9 +73,20 @@ The Random Forest model successfully identified key behavioral and demographic d
 ---
 
 ## 👩‍💻 Author
-**Inaaa**  
+**Zinedine Amalia**  
 Data Analyst | Customer Insights & Retention Strategy  
-📧 [Add your email or LinkedIn here]
+## 🤝 Connect with Me
+<p align="center">
+  <a href="https://linkedin.com/in/YOUR-zinedineamalia/" target="_blank">
+    <img src="https://img.icons8.com/color/48/linkedin.png" alt="LinkedIn"/>
+  </a>
+  <a href="mailto:zinedineamalianoor.com">
+    <img src="https://img.icons8.com/color/48/gmail-new.png" alt="Gmail"/>
+  </a>
+  <a href="https://instagram.com/z.amalia_" target="_blank">
+    <img src="https://img.icons8.com/color/48/instagram-new.png" alt="Instagram"/>
+  </a>
+</p>
 
 ---
 
