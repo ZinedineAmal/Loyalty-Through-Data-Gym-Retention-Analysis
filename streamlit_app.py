@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import joblib
+import plotly.express as px
+import altair as alt
 
 # ============== LOAD MODEL & SCALER ==============
 try:
@@ -30,138 +32,110 @@ df, loyal = load_data()
 tab1, tab2 = st.tabs(["📊 Exploratory Data Analysis (EDA)", "🔮 Churn Prediction"])
 
 # ============== TAB 1: EDA ==============
+import plotly.express as px
+import altair as alt
+
 with tab1:
     st.header("📊 Exploratory Data Analysis (EDA)")
-    st.markdown("Below are visual insights from the **loyal customer segment** — customers who have not churned.")
+    st.markdown("Interactive visual analysis of **loyal gym members**.")
 
-    # --- Layout 1: Churn Distribution & Near Location ---
+    # ==========================
+    # Layout 1: Churn & Near Location
+    # ==========================
     col1, col2 = st.columns(2)
+
     with col1:
         st.subheader("Churn Distribution")
-        fig, ax = plt.subplots()
-        df["Churn"].value_counts().plot(
-            kind="pie", autopct="%1.1f%%", startangle=90, colors=["#FFD60A", "#000000"], ax=ax
-        )
-        ax.set_ylabel("")
-        st.pyplot(fig)
-        st.markdown(
-            """
-            **Insight:** About the overall churn proportion.  
-            **Conclusion:** The majority of gym members remain **loyal**, indicating a healthy retention base but still room for improvement.
-            """
-        )
+        churn_counts = df["Churn"].value_counts().reset_index()
+        churn_counts.columns = ["Churn", "Count"]
+        fig = px.pie(churn_counts, names="Churn", values="Count",
+                     color_discrete_sequence=["gold", "black"],
+                     hole=0.3)
+        fig.update_traces(textinfo="percent+label")
+        st.plotly_chart(fig, use_container_width=True)
+        st.caption("Most customers remain **loyal** (did not churn).")
 
     with col2:
         st.subheader("Loyal Customers by Near Location")
-        fig, ax = plt.subplots()
-        loyal["Near_Location"].value_counts().plot(
-            kind="pie", autopct="%1.1f%%", startangle=90, colors=["#FFD60A", "#000000"], ax=ax
-        )
-        ax.set_ylabel("")
-        st.pyplot(fig)
-        st.markdown(
-            """
-            **Insight:** Distribution of loyal customers who live near vs. far from the gym.  
-            **Conclusion:** Most loyal members live **near the gym**, suggesting proximity strongly supports loyalty.
-            """
-        )
+        near_counts = loyal["Near_Location"].value_counts().reset_index()
+        near_counts.columns = ["Near_Location", "Count"]
+        st.bar_chart(near_counts.set_index("Near_Location"))
+        st.caption("Loyal members mostly live **near the gym**, showing proximity helps retention.")
 
-    # --- Layout 2: Age Distribution & Contract vs Lifetime ---
+    # ==========================
+    # Layout 2: Age & Contract
+    # ==========================
     col3, col4 = st.columns(2)
+
     with col3:
-        st.subheader("Age Distribution of Loyal Customers")
-        fig, ax = plt.subplots()
-        sns.histplot(loyal["Age"], bins=20, kde=True, ax=ax, color="#FFB703")
-        ax.set_title("")
-        st.pyplot(fig)
-        st.markdown(
-            """
-            **Insight:** Younger adults dominate the loyal segment.  
-            **Conclusion:** Customers aged **25–35** tend to be more active and consistent gym-goers.
-            """
-        )
+        st.subheader("Age Distribution (Loyal Members)")
+        age_hist = np.histogram(loyal["Age"], bins=20)[0]
+        st.bar_chart(age_hist)
+        st.caption("Most loyal members are between **25–35 years old**.")
 
     with col4:
         st.subheader("Contract Duration vs Lifetime")
-        fig, ax = plt.subplots()
-        sns.boxplot(data=loyal, x="Contract_period", y="Lifetime", color="#FFD60A", ax=ax)
-        ax.set_title("")
-        st.pyplot(fig)
-        st.markdown(
-            """
-            **Insight:** Relationship between membership contract length and retention.  
-            **Conclusion:** Longer contract periods are associated with **longer lifetime durations**, showing contractual commitment increases loyalty.
-            """
+        contract_summary = loyal.groupby("Contract_period")["Lifetime"].mean().reset_index()
+        contract_chart = alt.Chart(contract_summary).mark_bar(color="gold").encode(
+            x="Contract_period:O",
+            y="Lifetime:Q",
+            tooltip=["Contract_period", "Lifetime"]
         )
+        st.altair_chart(contract_chart, use_container_width=True)
+        st.caption("Members with **longer contracts** tend to stay longer (higher lifetime).")
 
-    # --- Layout 3: Group Visits & Friend Promo ---
+    # ==========================
+    # Layout 3: Group Visits + Friend Promo
+    # ==========================
+    st.subheader("Group Visits and Friend Promotions (Loyal Members)")
+    loyal_group = loyal.groupby(["Group_visits", "Promo_friends"]).size().reset_index(name="Count")
+    fig = px.bar(
+        loyal_group, x="Group_visits", y="Count", color="Promo_friends",
+        barmode="group", color_discrete_sequence=["#606C38", "#DDA15E"]
+    )
+    fig.update_layout(xaxis_title="Group Visits (0=No, 1=Yes)", yaxis_title="Customer Count")
+    st.plotly_chart(fig, use_container_width=True)
+    st.caption("Combining **group classes** and **friend promos** correlates with the highest loyalty.")
+
+    # ==========================
+    # Layout 4: Lifetime & Spending
+    # ==========================
     col5, col6 = st.columns(2)
-    with col5:
-        st.subheader("Near Location, Group Visits, and Friend Promo")
-        loyal_near_friend_counts = loyal.groupby(['Near_Location', 'Group_visits', 'Promo_friends']).size().reset_index(name='count')
-        loyal_near_friend_counts["Group_Promo"] = loyal_near_friend_counts["Group_visits"].astype(str) + "_" + loyal_near_friend_counts["Promo_friends"].astype(str)
 
-        fig, ax = plt.subplots(figsize=(7, 4))
-        sns.barplot(data=loyal_near_friend_counts, x='Near_Location', y='count', hue='Group_Promo',
-                    palette=['#606C38', '#283618', '#BC6C25', '#DDA15E'], ax=ax)
-        st.pyplot(fig)
-        st.markdown(
-            """
-            **Insight:** Group classes and friend promotions combined drive engagement.  
-            **Conclusion:** Members who both attend **group classes** and join through **friend promos** show the **highest loyalty**.
-            """
-        )
+    with col5:
+        st.subheader("Lifetime Distribution")
+        fig = px.histogram(loyal, x="Lifetime", nbins=20, color_discrete_sequence=["#FFD60A"])
+        st.plotly_chart(fig, use_container_width=True)
+        st.caption("Most loyal customers stay around **10–20 months** on average.")
 
     with col6:
-        st.subheader("Lifetime Distribution (Loyal Customers)")
-        fig, ax = plt.subplots()
-        sns.histplot(loyal['Lifetime'], bins=20, kde=False, color='yellow', ax=ax)
-        sns.kdeplot(loyal['Lifetime'], bw_method='scott', linewidth=1.5, color='black', ax=ax)
-        st.pyplot(fig)
-        st.markdown(
-            """
-            **Insight:** Distribution of how long loyal customers stay members.  
-            **Conclusion:** Most loyal customers have a **membership lifetime of 10–20 months**, with a gradual decline after 24 months.
-            """
-        )
+        st.subheader("Additional Spending")
+        fig = px.histogram(loyal, x="Avg_additional_charges_total", nbins=20,
+                           color_discrete_sequence=["black"])
+        st.plotly_chart(fig, use_container_width=True)
+        st.caption("Loyal members tend to **spend more** on add-ons like training and products.")
 
-    # --- Layout 4: Age vs Lifetime & Additional Spending ---
-    col7, col8 = st.columns(2)
-    with col7:
-        st.subheader("Age vs Lifetime (Loyal Customers)")
-        fig, ax = plt.subplots()
-        sns.scatterplot(x='Age', y='Lifetime', data=loyal, ax=ax, color="#023047")
-        st.pyplot(fig)
-        st.markdown(
-            """
-            **Insight:** Relationship between age and how long customers stay.  
-            **Conclusion:** Middle-aged customers (30–40) tend to remain longer, likely due to **stable lifestyle patterns**.
-            """
-        )
+    # ==========================
+    # Layout 5: Attendance Frequency
+    # ==========================
+    st.subheader("Class Attendance Frequency (Total)")
+    freq_chart = px.histogram(loyal, x="Avg_class_frequency_total",
+                              color_discrete_sequence=["#FFB703"])
+    st.plotly_chart(freq_chart, use_container_width=True)
+    st.caption("Customers who attend **more than 3 sessions per week** are the most loyal.")
 
-    with col8:
-        st.subheader("Additional Charges Distribution")
-        fig, ax = plt.subplots()
-        sns.histplot(loyal["Avg_additional_charges_total"], bins=20, ax=ax, color="black")
-        st.pyplot(fig)
-        st.markdown(
-            """
-            **Insight:** Spending habits among loyal customers.  
-            **Conclusion:** Higher spending on add-ons (training, products) is typical among **loyal customers**, indicating engagement and brand trust.
-            """
-        )
-
-    # --- Layout 5: Class Frequency ---
-    st.subheader("Average Class Frequency (Total)")
-    fig, ax = plt.subplots(figsize=(7, 4))
-    sns.histplot(x='Avg_class_frequency_total', data=loyal, color='yellow', ax=ax)
-    st.pyplot(fig)
-    st.markdown(
-        """
-        **Insight:** Frequency of gym attendance among loyal customers.  
-        **Conclusion:** Customers who attend more than **3 classes per week** are significantly more loyal.
-        """
-    )
+    # ==========================
+    # Summary Insight
+    # ==========================
+    st.markdown("---")
+    st.subheader("📈 Summary of Key Insights")
+    st.markdown("""
+    - 🏠 **Location matters:** Members living near the gym show higher loyalty.
+    - 🤝 **Social engagement helps:** Group classes and friend promos boost retention.
+    - 📅 **Longer contracts = longer lifetime.**
+    - 💰 **High-spending and frequent attendees** are the most loyal segment.
+    - 👥 **Young adults (25–35)** dominate the loyal customer base.
+    """)
 
 
 # ============== TAB 2: PREDICTION ==============
