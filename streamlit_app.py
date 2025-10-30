@@ -60,3 +60,68 @@ raw_input = pd.DataFrame({
     'Month_to_end_contract': [month_to_end_contract],
     'Lifetime': [lifetime],
     'Avg_class_frequency_total': [avg_class_frequency_total],
+    'Avg_class_frequency_current_month': [avg_class_frequency_current_month],
+})
+
+# ===========================
+# 5. ENCODING & PREPARATION (one-hot encoding as in training)
+# ===========================
+categorical_cols = ['gender', 'Near_Location', 'Partner', 'Promo_friends', 'Phone', 'Group_visits']
+raw_dummies = pd.get_dummies(raw_input[categorical_cols])
+
+num_cols = [
+    'Contract_period', 'Age', 'Avg_additional_charges_total',
+    'Month_to_end_contract', 'Lifetime',
+    'Avg_class_frequency_total', 'Avg_class_frequency_current_month'
+]
+raw_numerical = raw_input[num_cols].astype(float)
+
+# Scale numeric features
+try:
+    scaled_num = pd.DataFrame(scaler.transform(raw_numerical), columns=num_cols, index=raw_input.index)
+except Exception as e:
+    st.error(f"Error while scaling data: {e}")
+    st.stop()
+
+# Combine dummies and scaled numeric features
+prepared = pd.concat([raw_dummies, scaled_num], axis=1)
+
+# ===========================
+# 6. ALIGN FEATURES WITH MODEL
+# ===========================
+if hasattr(model, "feature_names_in_"):
+    expected_features = list(model.feature_names_in_)
+else:
+    try:
+        expected_features = joblib.load("feature_names.joblib")
+    except Exception:
+        st.error(
+            "Model does not contain 'feature_names_in_' and no 'feature_names.joblib' file found. "
+            "Please save the feature list during training for consistent deployment."
+        )
+        st.stop()
+
+# Align column names (missing ones will be filled with 0)
+prepared = prepared.reindex(columns=expected_features, fill_value=0)
+
+# ===========================
+# 7. PREDICTION
+# ===========================
+if st.button("🔍 Predict Churn"):
+    try:
+        prediction = model.predict(prepared)[0]
+        prob = model.predict_proba(prepared)[0][1]
+
+        if prediction == 1:
+            st.error(f"⚠️ The customer is **likely to CHURN**, with a probability of {prob:.2f}")
+        else:
+            st.success(f"✅ The customer is **likely to REMAIN LOYAL**, with a churn probability of {prob:.2f}")
+
+    except Exception as e:
+        st.error(f"Error during prediction: {e}")
+
+# ===========================
+# 8. FOOTER
+# ===========================
+st.markdown("---")
+st.markdown("Built with ❤️ by **Zinedine Amalia** — *Gym Churn Prediction Project*")
