@@ -1,6 +1,9 @@
-streamlit
-pandas
-plotly
-openpyxl
-numpy
-pickle
+streamlit==1.51.0
+pandas==2.3.3
+numpy==2.3.4
+plotly==6.3.1
+openpyxl==3.1.5
+scikit-learn==1.2.2
+joblib==1.2.0
+matplotlib==3.7.2
+seaborn==0.12.2
