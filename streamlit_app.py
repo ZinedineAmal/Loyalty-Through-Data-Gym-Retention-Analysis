@@ -1,16 +1,17 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import pickle
+import joblib
 
 # ===========================
 # 1. LOAD MODEL DAN SCALER
 # ===========================
-with open("model_churn.pkl", "rb") as f:
-    model = pickle.load(f)
-
-with open("scaler.pkl", "rb") as f:
-    scaler = pickle.load(f)
+try:
+    model = joblib.load("model_churn.joblib")
+    scaler = joblib.load("scaler.joblib")
+except Exception as e:
+    st.error(f"Gagal memuat model atau scaler: {e}")
+    st.stop()
 
 # ===========================
 # 2. HEADER APLIKASI
@@ -70,27 +71,36 @@ for col in ['Near_Location', 'Partner', 'Promo_friends', 'Phone', 'Group_visits'
 # ===========================
 # 6. SCALE FITUR NUMERIK
 # ===========================
-num_cols = ['Contract_period', 'Age', 'Avg_additional_charges_total',
-            'Month_to_end_contract', 'Lifetime',
-            'Avg_class_frequency_total', 'Avg_class_frequency_current_month']
+num_cols = [
+    'Contract_period', 'Age', 'Avg_additional_charges_total',
+    'Month_to_end_contract', 'Lifetime',
+    'Avg_class_frequency_total', 'Avg_class_frequency_current_month'
+]
 
-input_data[num_cols] = scaler.transform(input_data[num_cols])
+try:
+    input_data[num_cols] = scaler.transform(input_data[num_cols])
+except Exception as e:
+    st.error(f"Terjadi kesalahan saat scaling data: {e}")
+    st.stop()
 
 # ===========================
 # 7. PREDIKSI
 # ===========================
 if st.button("🔍 Prediksi Churn"):
-    prediction = model.predict(input_data)[0]
-    prob = model.predict_proba(input_data)[0][1]
+    try:
+        prediction = model.predict(input_data)[0]
+        prob = model.predict_proba(input_data)[0][1]
 
-    if prediction == 1:
-        st.error(f"⚠️ Pelanggan **berpotensi CHURN** dengan probabilitas {prob:.2f}")
-    else:
-        st.success(f"✅ Pelanggan **berpotensi TETAP LOYAL** dengan probabilitas churn {prob:.2f}")
+        if prediction == 1:
+            st.error(f"⚠️ Pelanggan **berpotensi CHURN** dengan probabilitas {prob:.2f}")
+        else:
+            st.success(f"✅ Pelanggan **berpotensi TETAP LOYAL** dengan probabilitas churn {prob:.2f}")
+
+    except Exception as e:
+        st.error(f"Terjadi kesalahan saat prediksi: {e}")
 
 # ===========================
 # 8. FOOTER
 # ===========================
 st.markdown("---")
-st.markdown("Dibuat dengan ❤️ oleh Zinedine Amalia — Gym Churn Prediction Project")
-
+st.markdown("Dibuat dengan ❤️ oleh **Zinedine Amalia** — *Gym Churn Prediction Project*")
