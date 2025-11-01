@@ -10,7 +10,7 @@ st.set_page_config(page_title="Gym Churn Dashboard", layout="wide")
 st.markdown(
     """
     <style>
-    .gym-banner {
+    .gym {
         display: block;
         margin-left: auto;
         margin-right: auto;
@@ -20,7 +20,7 @@ st.markdown(
         border-radius: 15px;   /* sudut melengkung agar elegan */
     }
     </style>
-    <img src="gym.jpg" class="gym-banner">
+    <img src="gym.jpg" class="gym">
     """,
     unsafe_allow_html=True
 )
