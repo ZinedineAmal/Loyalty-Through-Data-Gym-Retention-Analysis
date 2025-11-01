@@ -7,8 +7,6 @@ from PIL import Image
 st.set_page_config(page_title="Gym Churn Dashboard", layout="wide")
 
 # === HEADER IMAGE ===
-from PIL import Image
-
 image = Image.open("gym.jpg")
 image = image.resize((2000, 700))  # (width, height)
 st.image(image)
