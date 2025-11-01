@@ -7,7 +7,7 @@ from PIL import Image
 st.set_page_config(page_title="Gym Churn Dashboard", layout="wide")
 
 # === HEADER IMAGE ===
-image = Image.open("eab8ad4c-96b0-4d83-8c94-8a38e6b1ab8a.png")
+image = Image.open("gym.jpg")
 st.image(image, use_container_width=True)
 
 # === TITLE ===
