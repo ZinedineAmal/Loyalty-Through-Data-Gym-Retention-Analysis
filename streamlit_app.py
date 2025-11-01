@@ -8,7 +8,9 @@ st.set_page_config(page_title="Gym Churn Dashboard", layout="wide")
 
 # === HEADER IMAGE ===
 image = Image.open("gym.jpg")
-st.image(image, use_container_width=600)
+image = image.resize((900, 250))  # (width, height)
+st.image(image)
+
 
 # === TITLE ===
 st.markdown("<h1 style='text-align: center;'>🏋️‍♀️ Gym Customer Churn Dashboard</h1>", unsafe_allow_html=True)
