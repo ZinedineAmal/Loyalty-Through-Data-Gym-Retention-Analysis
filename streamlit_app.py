@@ -8,7 +8,7 @@ st.set_page_config(page_title="Gym Churn Dashboard", layout="wide")
 
 # === HEADER IMAGE ===
 image = Image.open("gym.jpg")
-image = image.resize((900, 250))  # (width, height)
+image = image.resize((900, 500))  # (width, height)
 st.image(image)
 
 
