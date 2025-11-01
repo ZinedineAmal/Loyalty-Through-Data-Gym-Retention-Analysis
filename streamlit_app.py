@@ -28,10 +28,6 @@ except Exception as e:
     st.error(f"Failed to load model or scaler: {e}")
     st.stop()
 
-# ============== APP HEADER ==============
-st.set_page_config(page_title="Gym Churn Dashboard", layout="wide")
-st.title("🏋️‍♀️ Gym Customer Churn Dashboard")
-st.markdown("Explore customer insights and predict churn probabilities.")
 
 # ============== LOAD DATASET ==============
 @st.cache_data
