@@ -6,24 +6,13 @@ from PIL import Image
 
 st.set_page_config(page_title="Gym Churn Dashboard", layout="wide")
 
-# === HEADER IMAGE (centered banner) ===
-st.markdown(
-    """
-    <style>
-    .gym {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 80%;            /* ubah 60–90% kalau mau lebih kecil/besar */
-        max-height: 300px;     /* batasi tinggi banner */
-        object-fit: cover;     /* biar tidak ketarik */
-        border-radius: 15px;   /* sudut melengkung agar elegan */
-    }
-    </style>
-    <img src="gym.jpg" class="gym">
-    """,
-    unsafe_allow_html=True
-)
+# === HEADER IMAGE ===
+from PIL import Image
+
+image = Image.open("gym.jpg")
+image = image.resize((2000, 700))  # (width, height)
+st.image(image)
+
 
 
 # === TITLE ===
