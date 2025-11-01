@@ -2,6 +2,17 @@ import streamlit as st
 import pandas as pd
 import joblib
 import plotly.express as px
+from PIL import Image
+
+st.set_page_config(page_title="Gym Churn Dashboard", layout="wide")
+
+# === HEADER IMAGE ===
+image = Image.open("eab8ad4c-96b0-4d83-8c94-8a38e6b1ab8a.png")
+st.image(image, use_container_width=True)
+
+# === TITLE ===
+st.markdown("<h1 style='text-align: center;'>🏋️‍♀️ Gym Customer Churn Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("### Explore customer insights and predict churn probabilities.")
 
 px.defaults.template = "plotly_white"
 px.defaults.color_discrete_sequence = ["#FFD60A", "#000000", "#003566"]
