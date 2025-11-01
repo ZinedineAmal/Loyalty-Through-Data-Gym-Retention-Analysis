@@ -134,7 +134,7 @@ with tab2:
             near_counts,
             x="Near_Location",
             y="Count",
-            color_discrete_sequence=[blue]
+            color_discrete_sequence=[black]
         )
         st.plotly_chart(fig2, use_container_width=True)
         st.caption("Loyal members mostly live near the gym.")
@@ -176,7 +176,7 @@ with tab2:
             age_life,
             x="Age",
             y="Lifetime",
-            color_discrete_sequence=[black],
+            color_discrete_sequence=[gold],
             markers=True
         )
         fig8.update_layout(xaxis_title="Age", yaxis_title="Average Lifetime (months)")
