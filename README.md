@@ -1,5 +1,10 @@
 # 🏋️‍♀️ Gym Customer Churn & Retention Analysis
 
+
+<p align="center">
+  <img src="gym.jpg" alt="Gym Retention Dashboard" width="400"/>
+</p>
+
 ## 📌 Project Overview
 This project aims to analyze **customer churn behavior** in a gym business and develop **data-driven retention strategies**.  
 Using machine learning (Random Forest model), we identify the most influential factors affecting customer loyalty and provide actionable business recommendations.
@@ -9,13 +14,16 @@ Using machine learning (Random Forest model), we identify the most influential f
 ## 🎯 Objectives
 - To identify and understand the key factors that contribute to gym customer loyalty, enabling the company to enhance retention and prevent future churn.
 - To develop an optimal predictive model for customer loyalty that can help identify high-risk customers and support data-driven retention strategies.
+
 ---
 
 ## 🧠 Machine Learning Model
 ### Model Used:
-- **Random Forest Classifier**
+- **Ridge Classification**
+- **KNN Classification**
+- **Random Forest Classifier** (**BEST MODEL**)
 
-### Model Highlights:
+### Best Model Highlights:
 - Strong generalization performance (consistent on both train and test data).  
 - Accurately identifies:
   - ✅ **True Positives (TP):** 185 customers correctly predicted to churn.  
@@ -61,6 +69,21 @@ Using machine learning (Random Forest model), we identify the most influential f
 
 ---
 
+## 📂 Dataset Information
+The dataset used for this project was sourced from **Kaggle**:
+
+📎 **[Gym Customers Features and Churn — Kaggle Dataset](https://www.kaggle.com/datasets/adrianvinueza/gym-customers-features-and-churn)**  
+
+The dataset contains detailed information about gym customers, including:
+- Demographic features (age, gender, location)
+- Behavioral data (visits, class participation, contract period)
+- Spending behavior
+- Churn label (whether a customer has left the gym)
+
+This dataset serves as the foundation for analyzing customer retention behavior and building predictive models for churn.
+
+---
+
 ## 📊 Tools & Libraries
 - **Python**, **Pandas**, **Scikit-learn**, **Matplotlib**, **Seaborn**
 - **Jupyter Notebook** for exploration & visualization
@@ -75,6 +98,7 @@ The Random Forest model successfully identified key behavioral and demographic d
 ## 👩‍💻 Author
 **Zinedine Amalia**  
 Data Analyst | Customer Insights & Retention Strategy  
+
 ## 🤝 Connect with Me
 <p align="center">
   <a href="https://linkedin.com/in/YOUR-zinedineamalia/" target="_blank">
